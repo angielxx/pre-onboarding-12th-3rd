@@ -1,16 +1,19 @@
-import { search } from '@/apis/search';
-import { useEffect } from 'react';
+// import { useSearchQuery } from '@/hooks/useSearchQuery';
+import { useState } from 'react';
 
 const Home = () => {
-  useEffect(() => {
-    search('담낭');
-  }, []);
+  const [keyword, setKeyword] = useState<string | null>(null);
+  // const { data, isLoading, error } = useSearchQuery(keyword);
+
+  const searchOnChange = e => {
+    setKeyword(e.target.value);
+  };
 
   return (
     <div>
-      <input type="text" />
+      <input type="text" placeholder="질환명을 입력해주세요." onChange={searchOnChange} />
     </div>
-  )
-}
+  );
+};
 
 export default Home;

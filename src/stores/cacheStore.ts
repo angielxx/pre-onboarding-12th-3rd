@@ -1,36 +1,45 @@
+import { DataType } from '@/types';
 import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
 
-type CacheEntry<D> = {
-  data: D;
+type CacheEntry = {
+  data: DataType;
   due: number;
 };
 
-type State<D = unknown> = {
-  cache: {
-    [key: string]: CacheEntry<D>;
-  };
-  setCache: (key: string, data: D, expireTime?: number) => void;
-  findCache: (key: string) => D | undefined;
+type State = {
+  cache: Record<string, CacheEntry>;
+  setCache: (key: string, data: DataType, expireTime?: number) => void;
+  findCache: (key: string) => DataType | undefined;
 };
 
-const DEFAULT_EXPIRE_TIME = 1000 * 60 * 60;
+export const DEFAULT_EXPIRE_TIME = 1000 * 60 * 60;
 
-const cacheStore = create<State>((set, get) => ({
-  cache: {},
+const useCacheStore = create<State>()(
+  devtools(
+    persist(
+      (set, get) => ({
+        cache: {},
 
-  setCache: (key, data, expireTime = DEFAULT_EXPIRE_TIME): void => {
-    const due = Date.now() + expireTime;
-    set(state => ({ cache: { ...state.cache, [key]: { data, due } } }));
-  },
+        setCache: (key, data, expireTime = DEFAULT_EXPIRE_TIME): void => {
+          const due = Date.now() + expireTime;
+          set(state => ({ cache: { ...state.cache, [key]: { data, due } } }));
+        },
 
-  findCache: key => {
-    const entry = get().cache[key];
-    if (entry && entry.due > Date.now()) {
-      return entry.data;
-    } else {
-      return undefined;
-    }
-  },
-}));
+        findCache: key => {
+          const cacheData = get().cache[key];
+          const hasExpired = cacheData.due > Date.now();
 
-export default cacheStore;
+          if (cacheData && hasExpired) {
+            return cacheData.data;
+          } else {
+            return undefined;
+          }
+        },
+      }),
+      { name: 'cacheStore' },
+    ),
+  ),
+);
+
+export default useCacheStore;
