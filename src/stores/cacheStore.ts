@@ -28,9 +28,9 @@ const useCacheStore = create<State>()(
 
         findCache: key => {
           const cacheData = get().cache[key];
-          const hasExpired = cacheData.due > Date.now();
-
-          if (cacheData && hasExpired) {
+          if (cacheData) {
+            const hasExpired = cacheData.due < Date.now();
+            if (hasExpired) return undefined;
             return cacheData.data;
           } else {
             return undefined;

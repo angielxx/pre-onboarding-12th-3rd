@@ -5,7 +5,7 @@ import { DataType } from '@/types';
 import useCacheStore from '@/stores/cacheStore';
 
 export const useSearchQuery = (keyword: string, expireTime?: number) => {
-  const { cache, setCache, findCache } = useCacheStore(state => state);
+  const { setCache, findCache } = useCacheStore(state => state);
 
   const [data, setData] = useState<DataType | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -14,7 +14,9 @@ export const useSearchQuery = (keyword: string, expireTime?: number) => {
   const refetch = useCallback(async (keyword: string) => {
     try {
       setIsLoading(true);
-      await searchByKeyword(keyword);
+      const { data } = await searchByKeyword(keyword);
+      setData(data);
+      setCache(keyword, data, expireTime);
     } catch (err) {
       // throw
     } finally {
@@ -23,6 +25,8 @@ export const useSearchQuery = (keyword: string, expireTime?: number) => {
   }, []);
 
   useEffect(() => {
+    if (keyword === '') return;
+
     const cacheResult = findCache(keyword);
 
     // cache hit
