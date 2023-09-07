@@ -1,19 +1,25 @@
-import { useCallback, useEffect, useState } from 'react';
+import useKeywordStore from '@/stores/keywordStore';
+import { useCallback, useEffect } from 'react';
 
-export const useKeyboardEvent = (maxId: number) => {
-  const [selectedId, setSelectedId] = useState<number>(-1);
+export const useKeyboardEvent = (onEnter: () => void) => {
+  const { selectedId, setSelectedId, maxId } = useKeywordStore(state => state);
 
   const keyDownHandler = useCallback(
-    ({ key }) => {
+    (event: globalThis.KeyboardEvent) => {
+      const { key } = event;
+
       if (key === 'ArrowUp') {
-        console.log('up');
-        setSelectedId(prev => Math.max(prev - 1, -1));
+        setSelectedId(Math.max(selectedId - 1, -1));
       } else if (key === 'ArrowDown') {
         console.log('down');
-        setSelectedId(prev => Math.min(prev + 1, maxId));
+        setSelectedId(Math.min(selectedId + 1, maxId));
+      } else if (key === 'Enter') {
+        console.log('enter');
+        event.preventDefault();
+        onEnter();
       }
     },
-    [maxId],
+    [maxId, onEnter],
   );
 
   useEffect(() => {
@@ -24,5 +30,5 @@ export const useKeyboardEvent = (maxId: number) => {
     };
   }, [keyDownHandler]);
 
-  return { selectedId };
+  return;
 };

@@ -1,45 +1,41 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { searchByKeyword } from '@/apis/search';
-import { DataType } from '@/types';
 import useCacheStore from '@/stores/cacheStore';
-import useRecentKeywordStore from '@/stores/recentKeywordStore';
+import useFetchStore from '@/stores/fetchStore';
 
 export const useSearchQuery = (keyword: string, expireTime?: number) => {
   const { setCache, findCache } = useCacheStore(state => state);
 
-  const addKeyword = useRecentKeywordStore(state => state.addKeyword);
+  const { setIsLoading, setData, setError } = useFetchStore(state => state);
 
-  const [data, setData] = useState<DataType | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<Error | null>(null);
-
-  const refetch = useCallback(async (keyword: string) => {
-    try {
-      setIsLoading(true);
-      const { data } = await searchByKeyword(keyword);
-      setData(data);
-      setCache(keyword, data, expireTime);
-      addKeyword(keyword);
-    } catch (err) {
-      // throw
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const fetchData = useCallback(
+    async (keyword: string) => {
+      try {
+        setIsLoading(true);
+        const { data } = await searchByKeyword(keyword);
+        setData(data);
+        setCache(keyword, data, expireTime);
+      } catch (err) {
+        // setError(err);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [expireTime, setCache, setData, setIsLoading],
+  );
 
   useEffect(() => {
     if (keyword === '') return;
 
     const cacheResult = findCache(keyword);
 
-    // cache hit
     if (cacheResult) {
       setData(cacheResult);
     } else {
-      refetch(keyword);
+      fetchData(keyword);
     }
-  }, [keyword, refetch]);
+  }, [keyword, fetchData, findCache, setData]);
 
-  return { data, isLoading, error };
+  return;
 };
