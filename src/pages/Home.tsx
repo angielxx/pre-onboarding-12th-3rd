@@ -2,6 +2,7 @@ import { ChangeEvent, useState } from 'react';
 
 // import { useSearchQuery } from '@/hooks/useSearchQuery';
 import { KeywordsResult } from '@/components/KeywordsResult';
+import { styled } from 'styled-components';
 
 const Home = () => {
   const [showResult, setShowResult] = useState<boolean>(false);
@@ -13,17 +14,23 @@ const Home = () => {
   };
 
   return (
-    <div>
+    <InputAreaContainer>
       <input
         type="text"
         placeholder="질환명을 입력해주세요."
         onChange={searchOnChange}
         onFocus={() => setShowResult(true)}
-        onBlur={() => setShowResult(false)}
+        // onBlur={() => setShowResult(false)}
       />
       {showResult && <KeywordsResult keyword={keyword} />}
-    </div>
+    </InputAreaContainer>
   );
 };
 
 export default Home;
+
+const InputAreaContainer = styled.div`
+  width: 50vw;
+  position: relative;
+  top: 30%;
+`;
