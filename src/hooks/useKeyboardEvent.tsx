@@ -1,8 +1,11 @@
 import useKeywordStore from '@/stores/keywordStore';
+import useRecentKeywordStore from '@/stores/recentKeywordStore';
 import { useCallback, useEffect } from 'react';
 
 export const useKeyboardEvent = (onEnter: () => void) => {
   const { selectedId, setSelectedId, maxId } = useKeywordStore(state => state);
+
+  const { addKeyword } = useRecentKeywordStore(state => state);
 
   const keyDownHandler = useCallback(
     (event: globalThis.KeyboardEvent) => {
@@ -23,7 +26,7 @@ export const useKeyboardEvent = (onEnter: () => void) => {
         onEnter();
       }
     },
-    [maxId, onEnter, selectedId, setSelectedId],
+    [maxId, selectedId, setSelectedId],
   );
 
   useEffect(() => {

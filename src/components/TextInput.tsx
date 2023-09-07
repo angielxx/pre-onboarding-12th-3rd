@@ -1,8 +1,7 @@
-import { useKeyboardEvent } from '@/hooks/useKeyboardEvent';
 import { useSearchQuery } from '@/hooks/useSearchQuery';
 import useKeywordStore from '@/stores/keywordStore';
-import useRecentKeywordStore from '@/stores/recentKeywordStore';
-import { ChangeEvent, KeyboardEvent } from 'react';
+import { ChangeEvent } from 'react';
+import { styled } from 'styled-components';
 
 interface Props {
   placeholder: string;
@@ -11,11 +10,7 @@ interface Props {
 }
 
 export const TextInput = ({ placeholder, showKeywordsList, id, ...rest }: Props) => {
-  const { addKeyword } = useRecentKeywordStore(state => state);
-
   const { keyword, setKeyword, setSelectedId } = useKeywordStore(state => state);
-
-  useKeyboardEvent(searchOnSubmit);
 
   useSearchQuery(keyword);
 
@@ -24,30 +19,30 @@ export const TextInput = ({ placeholder, showKeywordsList, id, ...rest }: Props)
     setSelectedId(-1);
   };
 
-  function searchOnSubmit() {
-    // api request and navigate
-    if (keyword === '') return;
-    addKeyword(keyword);
-    setKeyword('');
-  }
-
-  const handleOnKeydown = (e: KeyboardEvent) => {
-    if (e.key === 'ArrowDown') {
-      // e.preventDefault();
-    }
-  };
-
   return (
-    <input
+    <StyledInput
       type="text"
       placeholder={placeholder}
       value={keyword}
       onChange={keywordOnChange}
       onFocus={showKeywordsList}
-      onKeyDown={handleOnKeydown}
       autoFocus
       id={id}
       {...rest}
     />
   );
 };
+
+const StyledInput = styled.input`
+  border: none;
+  outline: none;
+  width: calc(100% - 56px);
+  height: fit-content;
+  background-color: transparent;
+  font-size: 16px;
+  color: ${({ theme }) => theme.color.fontPrimary};
+
+  &::placeholder {
+    color: ${({ theme }) => theme.color.grey200};
+  }
+`;

@@ -1,8 +1,8 @@
 import { MouseEvent, useState } from 'react';
 import { styled } from 'styled-components';
 
-import { TextInput } from '@/components/TextInput';
 import { KeywordsList } from '@/components/KeywordsList';
+import { SearchInputContainer } from '@/components/SearchInputContainer';
 
 const Search = () => {
   const [showKeywordsList, setShowKeywordsList] = useState<boolean>(false);
@@ -17,11 +17,7 @@ const Search = () => {
         국내 모든 임상시험 검색하고
         <br /> 온라인으로 참여하기
       </h2>
-      <TextInput
-        placeholder="질환명을 입력해주세요."
-        showKeywordsList={() => setShowKeywordsList(true)}
-        id="text-input"
-      />
+      <SearchInputContainer showKeywordsList={() => setShowKeywordsList(true)} />
       {showKeywordsList && <KeywordsList />}
     </SearchContainer>
   );
@@ -30,7 +26,7 @@ const Search = () => {
 export default Search;
 
 const SearchContainer = styled.div`
-  width: 100%;
+  width: 500px;
   position: relative;
   height: 100%;
   padding: 80px 0px 0px 0px;
