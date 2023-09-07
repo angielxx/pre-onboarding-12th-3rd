@@ -3,6 +3,7 @@ import { devtools, persist } from 'zustand/middleware';
 
 type State = {
   recentKeywords: string[];
+  addKeyword: (keyword: string) => void;
 };
 
 const useRecentKeywordStore = create<State>()(
