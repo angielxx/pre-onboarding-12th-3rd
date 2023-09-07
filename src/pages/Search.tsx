@@ -8,7 +8,7 @@ const Search = () => {
   const [showKeywordsList, setShowKeywordsList] = useState<boolean>(false);
 
   const hideKeywordsList = (e: MouseEvent) => {
-    // console.log(e.target, e.currentTarget);
+    console.log(e.target, e.currentTarget);
   };
 
   return (

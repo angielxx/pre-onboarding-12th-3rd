@@ -6,11 +6,15 @@ export const useKeyboardEvent = (onEnter: () => void) => {
 
   const keyDownHandler = useCallback(
     (event: globalThis.KeyboardEvent) => {
+      if (event.isComposing) return;
+
       const { key } = event;
 
       if (key === 'ArrowUp') {
+        event.preventDefault();
         setSelectedId(Math.max(selectedId - 1, -1));
       } else if (key === 'ArrowDown') {
+        event.preventDefault();
         console.log('down');
         setSelectedId(Math.min(selectedId + 1, maxId));
       } else if (key === 'Enter') {
@@ -19,7 +23,7 @@ export const useKeyboardEvent = (onEnter: () => void) => {
         onEnter();
       }
     },
-    [maxId, onEnter],
+    [maxId, onEnter, selectedId, setSelectedId],
   );
 
   useEffect(() => {

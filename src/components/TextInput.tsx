@@ -2,7 +2,7 @@ import { useKeyboardEvent } from '@/hooks/useKeyboardEvent';
 import { useSearchQuery } from '@/hooks/useSearchQuery';
 import useKeywordStore from '@/stores/keywordStore';
 import useRecentKeywordStore from '@/stores/recentKeywordStore';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, KeyboardEvent } from 'react';
 
 interface Props {
   placeholder: string;
@@ -31,6 +31,12 @@ export const TextInput = ({ placeholder, showKeywordsList, id, ...rest }: Props)
     setKeyword('');
   }
 
+  const handleOnKeydown = (e: KeyboardEvent) => {
+    if (e.key === 'ArrowDown') {
+      // e.preventDefault();
+    }
+  };
+
   return (
     <input
       type="text"
@@ -38,6 +44,7 @@ export const TextInput = ({ placeholder, showKeywordsList, id, ...rest }: Props)
       value={keyword}
       onChange={keywordOnChange}
       onFocus={showKeywordsList}
+      onKeyDown={handleOnKeydown}
       autoFocus
       id={id}
       {...rest}
