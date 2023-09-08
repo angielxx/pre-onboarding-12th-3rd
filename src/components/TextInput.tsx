@@ -3,7 +3,7 @@ import useKeywordStore from '@/stores/keywordStore';
 import useRecentKeywordStore from '@/stores/recentKeywordStore';
 import { KeywordItem } from '@/types';
 
-import { ChangeEvent, KeyboardEvent, useEffect } from 'react';
+import { ChangeEvent, KeyboardEvent, useEffect, useRef } from 'react';
 import { styled } from 'styled-components';
 
 export const TextInput = ({ ...rest }) => {
@@ -19,6 +19,8 @@ export const TextInput = ({ ...rest }) => {
     setIsShowList,
   } = useKeywordStore(state => state);
 
+  const inputRef = useRef<null | HTMLInputElement>(null);
+
   const { addKeyword } = useRecentKeywordStore(state => state);
 
   useSearchQuery();
@@ -33,7 +35,7 @@ export const TextInput = ({ ...rest }) => {
     setIsShowList(true);
   };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.nativeEvent.isComposing) return;
 
     const { key } = event;
@@ -50,14 +52,18 @@ export const TextInput = ({ ...rest }) => {
       event.preventDefault();
       addKeyword(keyword);
       setIsKeyDown(false);
-      setKeyword('');
       setIsShowList(false);
+      setKeyword('');
+      await setInputValue('');
+      setSelectedId(-1);
+      inputRef.current?.blur();
     }
   };
 
   const onBlurHandler = () => {
     setSelectedId(-1);
     setIsShowList(false);
+    setKeyword(inputValue);
   };
 
   function isKeywordItemArray(array: string[] | KeywordItem[]): array is KeywordItem[] {
@@ -74,10 +80,11 @@ export const TextInput = ({ ...rest }) => {
       selectedKeyword = keywordsList[selectedId];
     }
     setKeyword(selectedKeyword);
-  }, [selectedId, keywordsList, inputValue, keyword]);
+  }, [selectedId, keywordsList, inputValue, keyword, setKeyword]);
 
   return (
     <StyledInput
+      ref={inputRef}
       type="text"
       value={keyword}
       onChange={keywordOnChange}

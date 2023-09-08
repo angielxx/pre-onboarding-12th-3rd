@@ -9,13 +9,13 @@ import useFetchStore from '@/stores/fetchStore';
 import useKeywordStore from '@/stores/keywordStore';
 
 export const KeywordsList = () => {
-  const { keyword, setKeywordsList } = useKeywordStore();
+  const { inputValue, setKeywordsList } = useKeywordStore();
 
   const { recentKeywords } = useRecentKeywordStore(state => state);
 
   const { data } = useFetchStore(state => state);
 
-  const list_type = !keyword ? 'recent' : 'recommended';
+  const list_type = inputValue ? 'recommended' : 'recent';
 
   useEffect(() => {
     if (list_type === 'recent') {
