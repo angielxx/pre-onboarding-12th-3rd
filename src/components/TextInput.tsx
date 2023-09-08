@@ -9,6 +9,7 @@ import { styled } from 'styled-components';
 export const TextInput = ({ ...rest }) => {
   const {
     keyword,
+    inputValue,
     selectedId,
     keywordsList,
     setKeyword,
@@ -66,7 +67,6 @@ export const TextInput = ({ ...rest }) => {
   useEffect(() => {
     if (selectedId == -1) return;
 
-    console.log(keyword);
     let selectedKeyword: string;
     if (isKeywordItemArray(keywordsList)) {
       selectedKeyword = keywordsList[selectedId].sickNm;
@@ -74,7 +74,7 @@ export const TextInput = ({ ...rest }) => {
       selectedKeyword = keywordsList[selectedId];
     }
     setKeyword(selectedKeyword);
-  }, [selectedId, keywordsList]);
+  }, [selectedId, keywordsList, inputValue, keyword]);
 
   return (
     <StyledInput
