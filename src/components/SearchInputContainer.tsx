@@ -5,7 +5,8 @@ import useRecentKeywordStore from '@/stores/recentKeywordStore';
 import { styled } from 'styled-components';
 
 export const SearchInputContainer = () => {
-  const { keyword, setKeyword } = useKeywordStore(state => state);
+  const { keyword, setKeyword, setInputValue, setIsShowList, setIsKeyDown, setSelectedId } =
+    useKeywordStore(state => state);
 
   const { addKeyword } = useRecentKeywordStore(state => state);
 
@@ -14,6 +15,10 @@ export const SearchInputContainer = () => {
     if (keyword === '') return;
     addKeyword(keyword);
     setKeyword('');
+    setInputValue('');
+    setIsShowList(false);
+    setIsKeyDown(false);
+    setSelectedId(-1);
   };
 
   return (
