@@ -14,7 +14,8 @@ const useRecentKeywordStore = create<State>()(
 
         addKeyword: (keyword: string) => {
           let currentRecentList = get().recentKeywords;
-          if (keyword in currentRecentList) {
+
+          if (currentRecentList.includes(keyword)) {
             const idx = currentRecentList.indexOf(keyword);
             currentRecentList = [
               ...currentRecentList.slice(0, idx),
