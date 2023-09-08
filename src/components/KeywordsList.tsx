@@ -58,4 +58,18 @@ export const KeywordsListContainer = styled.div`
     margin-left: 24px;
     color: ${({ theme }) => theme.color.grey400};
   }
+
+  .loading,
+  .error {
+    text-align: center;
+    margin-left: 24px;
+    margin-bottom: 24px;
+    margin-top: 24px;
+    font-size: 14px;
+    color: ${({ theme }) => theme.color.primaryLight};
+  }
+
+  .error {
+    color: ${({ theme }) => theme.color.primary};
+  }
 `;

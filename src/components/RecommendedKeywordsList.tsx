@@ -11,8 +11,8 @@ export const RecommendedKeywordsList = () => {
   return (
     <KeywordsListContainer>
       <KeywordListItem keyword={keyword} key={-1} isSelected={selectedId == -1} />
-      {isLoading && <p>Loading...</p>}
-      {error && <p>Error</p>}
+      {isLoading && <p className="loading">Loading...</p>}
+      {error && <p className="error">잠시 후 다시 시도해주세요.</p>}
       {!isLoading && data.length === 0 && (
         <>
           <p className="title">추천 검색어</p>
