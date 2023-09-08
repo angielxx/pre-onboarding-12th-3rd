@@ -38,8 +38,6 @@
 구현영상은 배포 링크로 대체합니다.
 https://pre-onboarding-12th-3rd.vercel.app/
 
-### 동작 화면
-
 ---
 
 ### 💭 설계 방향
