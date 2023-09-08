@@ -22,7 +22,8 @@ export const useSearchQuery = () => {
 
       try {
         setIsLoading(true);
-        const { data } = await searchByKeyword(text);
+        let { data } = await searchByKeyword(text);
+        data = data.slice(0, 7);
         setData(data);
         setCache(text, data);
       } catch (err) {

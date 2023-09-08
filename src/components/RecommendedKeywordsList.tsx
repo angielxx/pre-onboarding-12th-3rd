@@ -23,7 +23,12 @@ export const RecommendedKeywordsList = () => {
         <>
           <p className="title">추천 검색어</p>
           {data?.map(({ sickCd, sickNm }, idx) => (
-            <KeywordListItem key={sickCd} keyword={sickNm} isSelected={idx == selectedId} />
+            <KeywordListItem
+              key={sickCd}
+              keyword={sickNm}
+              isSelected={idx == selectedId}
+              index={idx}
+            />
           ))}
         </>
       )}
