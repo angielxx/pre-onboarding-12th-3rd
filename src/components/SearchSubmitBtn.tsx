@@ -21,6 +21,7 @@ const BtnContainer = styled.button`
   height: 48px;
   outline: none;
   cursor: pointer;
+  border: 0;
 
   svg {
     fill: white;
