@@ -4,13 +4,13 @@ import useKeywordStore from '@/stores/keywordStore';
 import useFetchStore from '@/stores/fetchStore';
 
 export const RecommendedKeywordsList = () => {
-  const { keyword, selectedId } = useKeywordStore();
+  const { inputValue, selectedId } = useKeywordStore();
 
   const { data, isLoading, error } = useFetchStore(state => state);
 
   return (
     <KeywordsListContainer>
-      <KeywordListItem keyword={keyword} key={-1} isSelected={selectedId == -1} />
+      <KeywordListItem keyword={inputValue} key={-1} isSelected={selectedId == -1} />
       {isLoading && <p className="loading">Loading...</p>}
       {error && <p className="error">잠시 후 다시 시도해주세요.</p>}
       {!isLoading && data.length === 0 && (

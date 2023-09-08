@@ -1,14 +1,14 @@
 import { useSearchQuery } from '@/hooks/useSearchQuery';
 import useKeywordStore from '@/stores/keywordStore';
 import useRecentKeywordStore from '@/stores/recentKeywordStore';
+import { KeywordItem } from '@/types';
 
-import { ChangeEvent, KeyboardEvent } from 'react';
+import { ChangeEvent, KeyboardEvent, useEffect } from 'react';
 import { styled } from 'styled-components';
 
 export const TextInput = ({ ...rest }) => {
   const {
     keyword,
-
     selectedId,
     keywordsList,
     setKeyword,
@@ -58,6 +58,23 @@ export const TextInput = ({ ...rest }) => {
     setSelectedId(-1);
     setIsShowList(false);
   };
+
+  function isKeywordItemArray(array: string[] | KeywordItem[]): array is KeywordItem[] {
+    return array.length > 0 && typeof array[0] !== 'string';
+  }
+
+  useEffect(() => {
+    if (selectedId == -1) return;
+
+    console.log(keyword);
+    let selectedKeyword: string;
+    if (isKeywordItemArray(keywordsList)) {
+      selectedKeyword = keywordsList[selectedId].sickNm;
+    } else {
+      selectedKeyword = keywordsList[selectedId];
+    }
+    setKeyword(selectedKeyword);
+  }, [selectedId, keywordsList]);
 
   return (
     <StyledInput
