@@ -23,9 +23,11 @@ export const TextInput = ({ ...rest }) => {
   useSearchQuery();
 
   const keywordOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+
     setIsKeyDown(false);
-    setInputValue(e.target.value);
-    setKeyword(e.target.value);
+    setInputValue(value);
+    setKeyword(value);
     setSelectedId(-1);
     setIsShowList(true);
   };
