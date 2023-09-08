@@ -10,8 +10,8 @@ export const RecentKeywordsList = () => {
 
   return (
     <KeywordsListContainer>
-      <p>최근 검색어</p>
-      {recentKeywords.length === 0 && <p>최근 검색어가 없습니다.</p>}
+      <p className="title">최근 검색어</p>
+      {recentKeywords.length === 0 && <p className="empty">최근 검색어가 없습니다.</p>}
       {recentKeywords &&
         recentKeywords.map((recentKeyword, idx) => (
           <KeywordListItem key={idx} keyword={recentKeyword} isSelected={idx == selectedId} />

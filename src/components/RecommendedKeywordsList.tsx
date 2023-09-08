@@ -11,14 +11,22 @@ export const RecommendedKeywordsList = () => {
   return (
     <KeywordsListContainer>
       <KeywordListItem keyword={keyword} key={-1} isSelected={selectedId == -1} />
-      <p>추천 검색어</p>
       {isLoading && <p>Loading...</p>}
       {error && <p>Error</p>}
-      {data.length === 0 && <p>추천 검색어가 없습니다.</p>}
-      {!isLoading &&
-        data?.map(({ sickCd, sickNm }, idx) => (
-          <KeywordListItem key={sickCd} keyword={sickNm} isSelected={idx == selectedId} />
-        ))}
+      {!isLoading && data.length === 0 && (
+        <>
+          <p className="title">추천 검색어</p>
+          <p className="empty">추천 검색어가 없습니다.</p>
+        </>
+      )}
+      {!isLoading && data.length > 0 && (
+        <>
+          <p className="title">추천 검색어</p>
+          {data?.map(({ sickCd, sickNm }, idx) => (
+            <KeywordListItem key={sickCd} keyword={sickNm} isSelected={idx == selectedId} />
+          ))}
+        </>
+      )}
     </KeywordsListContainer>
   );
 };

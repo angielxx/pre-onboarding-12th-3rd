@@ -1,53 +1,86 @@
-import { useKeyboardEvent } from '@/hooks/useKeyboardEvent';
 import { useSearchQuery } from '@/hooks/useSearchQuery';
 import useKeywordStore from '@/stores/keywordStore';
 import useRecentKeywordStore from '@/stores/recentKeywordStore';
+
 import { ChangeEvent, KeyboardEvent } from 'react';
+import { styled } from 'styled-components';
 
-interface Props {
-  placeholder: string;
-  showKeywordsList: () => void;
-  id: string;
-}
+export const TextInput = ({ ...rest }) => {
+  const {
+    keyword,
 
-export const TextInput = ({ placeholder, showKeywordsList, id, ...rest }: Props) => {
+    selectedId,
+    keywordsList,
+    setKeyword,
+    setInputValue,
+    setIsKeyDown,
+    setSelectedId,
+    setIsShowList,
+  } = useKeywordStore(state => state);
+
   const { addKeyword } = useRecentKeywordStore(state => state);
 
-  const { keyword, setKeyword, setSelectedId } = useKeywordStore(state => state);
-
-  useKeyboardEvent(searchOnSubmit);
-
-  useSearchQuery(keyword);
+  useSearchQuery();
 
   const keywordOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setIsKeyDown(false);
+    setInputValue(e.target.value);
     setKeyword(e.target.value);
     setSelectedId(-1);
+    setIsShowList(true);
   };
 
-  function searchOnSubmit() {
-    // api request and navigate
-    if (keyword === '') return;
-    addKeyword(keyword);
-    setKeyword('');
-  }
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.nativeEvent.isComposing) return;
 
-  const handleOnKeydown = (e: KeyboardEvent) => {
-    if (e.key === 'ArrowDown') {
-      // e.preventDefault();
+    const { key } = event;
+
+    if (key === 'ArrowUp') {
+      event.preventDefault();
+      setIsKeyDown(true);
+      setSelectedId(Math.max(selectedId - 1, -1));
+    } else if (key === 'ArrowDown') {
+      event.preventDefault();
+      setIsKeyDown(true);
+      setSelectedId(Math.min(selectedId + 1, keywordsList.length - 1));
+    } else if (key === 'Enter' && keyword.trim()) {
+      event.preventDefault();
+      addKeyword(keyword);
+      setIsKeyDown(false);
+      setKeyword('');
+      setIsShowList(false);
     }
   };
 
+  const onBlurHandler = () => {
+    setSelectedId(-1);
+    setIsShowList(false);
+  };
+
   return (
-    <input
+    <StyledInput
       type="text"
-      placeholder={placeholder}
       value={keyword}
       onChange={keywordOnChange}
-      onFocus={showKeywordsList}
-      onKeyDown={handleOnKeydown}
-      autoFocus
-      id={id}
+      onFocus={() => setIsShowList(true)}
+      onBlur={onBlurHandler}
+      onKeyDown={handleKeyDown}
+      autoComplete="off"
       {...rest}
     />
   );
 };
+
+const StyledInput = styled.input`
+  border: none;
+  outline: none;
+  width: calc(100% - 56px);
+  height: fit-content;
+  background-color: transparent;
+  font-size: 16px;
+  color: ${({ theme }) => theme.color.fontPrimary};
+
+  &::placeholder {
+    color: ${({ theme }) => theme.color.grey200};
+  }
+`;
