@@ -5,8 +5,6 @@ import { SearchInputContainer } from '@/components/SearchInputContainer';
 import useKeywordStore from '@/stores/keywordStore';
 
 const Search = () => {
-  // const [showKeywordsList, setShowKeywordsList] = useState<boolean>(false);
-
   const { isShowList } = useKeywordStore(state => state);
 
   return (
