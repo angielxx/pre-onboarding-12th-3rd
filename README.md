@@ -60,11 +60,127 @@ https://pre-onboarding-12th-3rd.vercel.app/
 
 ### 1. 검색창
 
+아래 경우의 수를 모두 핸들링할 수 있도록 구현했습니다.
+
+- [x] input 값 없을 때 최근 검색어 목록 보이기
+- [x] input 값 있을 때 추천 검색어 목록 보이기
+- [x] 키보드 이동시 최근검색어 혹은 추천검색어 중 선택된 검색어를 input에 반영
+- [x] 키보드 이동 후 change 이벤트 발생 시 변경된 input 값으로 재반영
+- [x] 마우스를 호버시 최근검색어 혹은 추천검색어 중 호버된 검색어를 input에 반영
+
+#### keywordStore
+
+input창과 관련된 상태와 액션들을 관리할 수 있는 keywordStore를 분리하여 작성했습니다.
+
+```javascript
+// keywordStore.ts
+const useKeywordStore = create<State>()(
+  devtools((set, get) => ({
+    isShowList: false,
+    isKeyDown: false,
+
+    keyword: '',
+    inputValue: '',
+
+    selectedId: -1,
+    keywordsList: [],
+
+    setState: newState => set({ ...get(), ...newState }),
+
+    setIsShowList: isShowList => set({ ...get(), isShowList }),
+    setIsKeyDown: isKeyDown => set({ ...get(), isKeyDown }),
+
+    setKeyword: keyword => set({ ...get(), keyword }),
+    setInputValue: inputValue => set({ ...get(), inputValue }),
+
+    setSelectedId: selectedId => set({ ...get(), selectedId }),
+    setKeywordsList: keywordsList => set({ ...get(), keywordsList }),
+  })),
+);
+```
+
+특히, 아래 두 가지 값을 통해 사용자의 검색어를 관리했습니다. inputValue의 경우 사용자에 의해 입력된 문자를 보존하여 제공하기 위해 사용했으며, 키보드 이동 혹은 마우스 호버 이벤트로 최근 검색어 또는 추천 검색어 선택시 keyword에 반영했습니다. 이때 엔터 등의 이벤트 발생 시 최종적으로 사용자가 선택하는 검색어는 keyword가 되도록 구현했습니다.
+
+- keyword : 검색에 최종적으로 반영될 검색어
+- inputValue : 사용자의 의해 입력된 값
+
+#### keyDown 이벤트 핸들러
+
+input의 keyDown 핸들러에서 주목할 점은 두 가지 입니다.
+
+1. 한글 입력 시 핸들러 중복 호출 방지
+
+   - IME composition을 통해 OS와 브라우저 두 곳에서 keydown이벤트가 처리되기 때문에 핸들러가 두 번 호출되는 문제가 있었습니다 이를 방지하기 위해 keyboardEvent의 isComposing 속성이 true 일 때 핸들러가 작동하지 않도록 방지했습니다.
+
+2. 위, 아래 방향키 입력 시 커서 이동 방지
+
+- 위, 아래 방향키 입력 시 커서가 이동되는 현상이 발생했습니다. 이러한 현상을 방지하기 위해 event.preventDefault()로 기본 동작을 통한 커서 이동을 방지했습니다.
+
+```javascript
+// TextInput.tsx
+
+//...
+const handleKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
+  if (event.nativeEvent.isComposing) return;
+
+  const { key } = event;
+
+  if (key === 'ArrowUp') {
+    event.preventDefault();
+    setIsKeyDown(true);
+    setSelectedId(Math.max(selectedId - 1, -1));
+  } else if (key === 'ArrowDown') {
+    event.preventDefault();
+    setIsKeyDown(true);
+    setSelectedId(Math.min(selectedId + 1, keywordsList.length - 1));
+  } else if (key === 'Enter' && keyword.trim()) {
+    event.preventDefault();
+    addKeyword(keyword);
+    setIsKeyDown(false);
+    setIsShowList(false);
+    setKeyword('');
+    await setInputValue('');
+    setSelectedId(-1);
+    inputRef.current?.blur();
+  }
+};
+```
+
+#### 최근 검색어 및 추천 검색어 목록 표시
+
+사용자의 입력값이 없을 때 최근 검색어를, 입력값이 발생했을 때 추천 검색어를 제공했습니다. 두 가지의 경우를 명시적으로 표시하기 위해 삼항 연산자를 사용하지 않고, 각 상태를 변수로 표시하여 그에 맞는 검색어를 제공했습니다.
+
+```javascript
+// KeywordsList.tsx
+export const KeywordsList = () => {
+  // ...
+
+  const list_type = inputValue ? 'recommended' : 'recent';
+
+  useEffect(() => {
+    if (list_type === 'recent') {
+      setKeywordsList(recentKeywords);
+    }
+    if (list_type === 'recommended') {
+      setKeywordsList(data);
+    }
+  }, [data, recentKeywords, list_type, setKeywordsList]);
+
+  return (
+    <>
+      {list_type === 'recent' && <RecentKeywordsList />}
+      {list_type === 'recommended' && <RecommendedKeywordsList />}
+    </>
+  );
+};
+```
+
 ### 2. 추천 검색어 제공
 
 - 어떠한 값에 대해 특정 시간이 지난 후 변화를 감지하는 debounce 기능을 커스텀 훅으로 분리했습니다.
 
 ```javascript
+// useDebounce.tsx
 import { useState, useEffect } from 'react';
 
 export default function useDebounce<T>(value: T, delay = 300) {
@@ -89,6 +205,7 @@ export default function useDebounce<T>(value: T, delay = 300) {
 - 검색어에 대한 API 호출을 하기 전 'cache hit'인 경우 캐시된 데이터를 사용하고, 'cache miss'인 경우 API를 호출하도록 했습니다.
 
 ```javascript
+// useSearchQuery.tsx
 export const useSearchQuery = () => {
   const { setCache, findCache } = useCacheStore(state => state);
 
@@ -140,6 +257,7 @@ export const useSearchQuery = () => {
 - expirre time를 인자로 받아 그 값에 따라 캐시 기한을 저장했습니다.
 
 ```javascript
+// cacheStore.ts
 export const DEFAULT_EXPIRE_TIME = 1000 * 60 * 60;
 
 const useCacheStore = create<State>()(
@@ -168,8 +286,4 @@ const useCacheStore = create<State>()(
     ),
   ),
 );
-```
-
-```javascript
-
 ```
