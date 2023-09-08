@@ -11,12 +11,13 @@ export const useSearchQuery = () => {
 
   const { keyword, isKeyDown } = useKeywordStore(state => state);
 
-  const { setIsLoading, setData } = useFetchStore(state => state);
+  const { setIsLoading, setData, isLoading } = useFetchStore(state => state);
 
   const debouncedKeyword = useDebounce(keyword, 300);
 
   useEffect(() => {
     const fetchData = async (text: string) => {
+      if (isLoading) return;
       if (isKeyDown) return;
 
       try {
@@ -32,16 +33,17 @@ export const useSearchQuery = () => {
     };
 
     if (isKeyDown) return;
-    if (keyword === '') return;
+    if (debouncedKeyword === '') return;
 
-    const cacheResult = findCache(keyword);
+    const cacheResult = findCache(debouncedKeyword);
 
     if (cacheResult) {
       setData(cacheResult);
     } else {
+      if (!debouncedKeyword) return;
       fetchData(debouncedKeyword);
     }
-  }, [isKeyDown, keyword, debouncedKeyword]);
+  }, [isKeyDown, debouncedKeyword]);
 
   return;
 };
