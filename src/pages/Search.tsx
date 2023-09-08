@@ -3,9 +3,12 @@ import { styled } from 'styled-components';
 
 import { KeywordsList } from '@/components/KeywordsList';
 import { SearchInputContainer } from '@/components/SearchInputContainer';
+import useKeywordStore from '@/stores/keywordStore';
 
 const Search = () => {
-  const [showKeywordsList, setShowKeywordsList] = useState<boolean>(false);
+  // const [showKeywordsList, setShowKeywordsList] = useState<boolean>(false);
+
+  const { isShowList, setIsShowList } = useKeywordStore(state => state);
 
   const hideKeywordsList = (e: MouseEvent) => {
     console.log(e.target, e.currentTarget);
@@ -17,8 +20,8 @@ const Search = () => {
         국내 모든 임상시험 검색하고
         <br /> 온라인으로 참여하기
       </h2>
-      <SearchInputContainer showKeywordsList={() => setShowKeywordsList(true)} />
-      {showKeywordsList && <KeywordsList />}
+      <SearchInputContainer />
+      {isShowList && <KeywordsList />}
     </SearchContainer>
   );
 };

@@ -7,8 +7,11 @@ type State = {
   selectedId: number;
   maxId: number;
   keywordsList: string[] | KeywordItem[];
+  isShowList: boolean;
 
   setState: (newState: State) => void;
+
+  setIsShowList: (isShowList: boolean) => void;
 
   setKeyword: (keyword: string) => void;
   setSelectedId: (selectedId: number) => void;
@@ -18,12 +21,16 @@ type State = {
 
 const useKeywordStore = create<State>()(
   devtools((set, get) => ({
+    isShowList: false,
+
     keyword: '',
     selectedId: -1,
     maxId: -1,
     keywordsList: [],
 
     setState: newState => set({ ...get(), ...newState }),
+
+    setIsShowList: isShowList => set({ ...get(), isShowList }),
 
     setKeyword: keyword => set({ ...get(), keyword }),
     setSelectedId: selectedId => set({ ...get(), selectedId }),

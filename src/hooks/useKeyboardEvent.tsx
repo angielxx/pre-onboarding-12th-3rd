@@ -18,10 +18,8 @@ export const useKeyboardEvent = (onEnter: () => void) => {
         setSelectedId(Math.max(selectedId - 1, -1));
       } else if (key === 'ArrowDown') {
         event.preventDefault();
-        console.log('down');
         setSelectedId(Math.min(selectedId + 1, maxId));
       } else if (key === 'Enter') {
-        console.log('enter');
         event.preventDefault();
         onEnter();
       }

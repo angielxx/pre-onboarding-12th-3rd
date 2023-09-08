@@ -4,13 +4,8 @@ import { TextInput } from './TextInput';
 import useKeywordStore from '@/stores/keywordStore';
 import useRecentKeywordStore from '@/stores/recentKeywordStore';
 import { styled } from 'styled-components';
-// import { SearchIcon } from './SearchIcon';
 
-interface Props {
-  showKeywordsList: () => void;
-}
-
-export const SearchInputContainer = ({ showKeywordsList }: Props) => {
+export const SearchInputContainer = () => {
   const { keyword, setKeyword } = useKeywordStore(state => state);
 
   const { addKeyword } = useRecentKeywordStore(state => state);
@@ -26,12 +21,7 @@ export const SearchInputContainer = ({ showKeywordsList }: Props) => {
 
   return (
     <Container>
-      {/* <SearchIcon size={16} /> */}
-      <TextInput
-        placeholder="질환명을 입력해주세요."
-        showKeywordsList={showKeywordsList}
-        id="text-input"
-      />
+      <TextInput placeholder="질환명을 입력해주세요." id="text-input" />
       <SearchSubmitHandlerBtn submitHandler={submitInput} />
     </Container>
   );

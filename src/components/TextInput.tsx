@@ -3,14 +3,8 @@ import useKeywordStore from '@/stores/keywordStore';
 import { ChangeEvent } from 'react';
 import { styled } from 'styled-components';
 
-interface Props {
-  placeholder: string;
-  showKeywordsList: () => void;
-  id: string;
-}
-
-export const TextInput = ({ placeholder, showKeywordsList, id, ...rest }: Props) => {
-  const { keyword, setKeyword, setSelectedId } = useKeywordStore(state => state);
+export const TextInput = ({ ...rest }) => {
+  const { keyword, setKeyword, setSelectedId, setIsShowList } = useKeywordStore(state => state);
 
   useSearchQuery(keyword);
 
@@ -22,12 +16,11 @@ export const TextInput = ({ placeholder, showKeywordsList, id, ...rest }: Props)
   return (
     <StyledInput
       type="text"
-      placeholder={placeholder}
       value={keyword}
       onChange={keywordOnChange}
-      onFocus={showKeywordsList}
-      autoFocus
-      id={id}
+      onFocus={() => setIsShowList(true)}
+      onBlur={() => setIsShowList(false)}
+      autoComplete="off"
       {...rest}
     />
   );
