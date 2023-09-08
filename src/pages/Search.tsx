@@ -1,4 +1,3 @@
-import { MouseEvent, useState } from 'react';
 import { styled } from 'styled-components';
 
 import { KeywordsList } from '@/components/KeywordsList';
@@ -8,14 +7,10 @@ import useKeywordStore from '@/stores/keywordStore';
 const Search = () => {
   // const [showKeywordsList, setShowKeywordsList] = useState<boolean>(false);
 
-  const { isShowList, setIsShowList } = useKeywordStore(state => state);
-
-  const hideKeywordsList = (e: MouseEvent) => {
-    console.log(e.target, e.currentTarget);
-  };
+  const { isShowList } = useKeywordStore(state => state);
 
   return (
-    <SearchContainer onClick={hideKeywordsList}>
+    <SearchContainer>
       <h2>
         국내 모든 임상시험 검색하고
         <br /> 온라인으로 참여하기
