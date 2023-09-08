@@ -1,9 +1,10 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { searchByKeyword } from '@/apis/search';
 import useCacheStore from '@/stores/cacheStore';
 import useFetchStore from '@/stores/fetchStore';
 import useKeywordStore from '@/stores/keywordStore';
+import useDebounce from './useDebounce';
 
 export const useSearchQuery = () => {
   const { setCache, findCache } = useCacheStore(state => state);
@@ -12,25 +13,24 @@ export const useSearchQuery = () => {
 
   const { setIsLoading, setData } = useFetchStore(state => state);
 
-  const fetchData = useCallback(
-    async (keyword: string) => {
+  const debouncedKeyword = useDebounce(keyword, 300);
+
+  useEffect(() => {
+    const fetchData = async (text: string) => {
       if (isKeyDown) return;
 
       try {
         setIsLoading(true);
-        const { data } = await searchByKeyword(keyword);
+        const { data } = await searchByKeyword(text);
         setData(data);
-        setCache(keyword, data);
+        setCache(text, data);
       } catch (err) {
         // setError(err);
       } finally {
         setIsLoading(false);
       }
-    },
-    [isKeyDown, setCache, setData, setIsLoading],
-  );
+    };
 
-  useEffect(() => {
     if (isKeyDown) return;
     if (keyword === '') return;
 
@@ -39,9 +39,9 @@ export const useSearchQuery = () => {
     if (cacheResult) {
       setData(cacheResult);
     } else {
-      fetchData(keyword);
+      fetchData(debouncedKeyword);
     }
-  }, [isKeyDown, keyword, fetchData, findCache, setData]);
+  }, [isKeyDown, keyword, debouncedKeyword]);
 
   return;
 };

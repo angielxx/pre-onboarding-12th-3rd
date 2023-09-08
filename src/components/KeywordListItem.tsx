@@ -1,7 +1,5 @@
 import { styled } from 'styled-components';
 
-import search_icon from '@/assets/icon/search.svg';
-
 interface Props {
   keyword: string;
   isSelected: boolean;
