@@ -13,7 +13,15 @@ const useRecentKeywordStore = create<State>()(
         recentKeywords: [],
 
         addKeyword: (keyword: string) => {
-          let updatedKeywords = [...get().recentKeywords, keyword];
+          let currentRecentList = get().recentKeywords;
+          if (keyword in currentRecentList) {
+            const idx = currentRecentList.indexOf(keyword);
+            currentRecentList = [
+              ...currentRecentList.slice(0, idx),
+              ...currentRecentList.slice(idx + 1),
+            ];
+          }
+          let updatedKeywords = [keyword, ...currentRecentList];
 
           if (updatedKeywords.length > 10) {
             updatedKeywords = updatedKeywords.slice(updatedKeywords.length - 10);

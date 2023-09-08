@@ -9,7 +9,7 @@ import useFetchStore from '@/stores/fetchStore';
 import useKeywordStore from '@/stores/keywordStore';
 
 export const KeywordsList = () => {
-  const { keyword, setMaxId } = useKeywordStore();
+  const { keyword, setKeywordsList } = useKeywordStore();
 
   const { recentKeywords } = useRecentKeywordStore(state => state);
 
@@ -19,12 +19,12 @@ export const KeywordsList = () => {
 
   useEffect(() => {
     if (list_type === 'recent') {
-      setMaxId(recentKeywords.length);
+      setKeywordsList(recentKeywords);
     }
     if (list_type === 'recommended') {
-      setMaxId(data.length);
+      setKeywordsList(data);
     }
-  }, [data.length, recentKeywords.length, list_type, setMaxId]);
+  }, [data, recentKeywords, list_type, setKeywordsList]);
 
   return (
     <>

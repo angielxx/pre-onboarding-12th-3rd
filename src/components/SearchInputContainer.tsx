@@ -1,4 +1,3 @@
-import { useKeyboardEvent } from '@/hooks/useKeyboardEvent';
 import { SearchSubmitHandlerBtn } from './SearchSubmitBtn';
 import { TextInput } from './TextInput';
 import useKeywordStore from '@/stores/keywordStore';
@@ -16,8 +15,6 @@ export const SearchInputContainer = () => {
     addKeyword(keyword);
     setKeyword('');
   };
-
-  useKeyboardEvent(submitInput);
 
   return (
     <Container>
