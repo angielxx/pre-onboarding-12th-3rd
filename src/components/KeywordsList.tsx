@@ -15,7 +15,7 @@ export const KeywordsList = () => {
 
   const { data } = useFetchStore(state => state);
 
-  const list_type = keyword === '' ? 'recent' : 'recommended';
+  const list_type = !keyword ? 'recent' : 'recommended';
 
   useEffect(() => {
     if (list_type === 'recent') {
