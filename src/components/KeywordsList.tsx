@@ -37,9 +37,7 @@ export const KeywordsList = () => {
 export const KeywordsListContainer = styled.div`
   background-color: white;
   padding: 24px 0 24px 0;
-  max-height: 360px;
   width: 100%;
-  overflow: scroll;
   overflow-x: hidden;
   position: absolute;
   box-sizing: border-box;
